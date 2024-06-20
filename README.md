@@ -13,7 +13,14 @@ docker learning memory
 ## Container
 <img width="167" alt="Screenshot 2024-06-18 at 23 52 24" src="https://github.com/goushijianglin/docker/assets/83333650/b9219833-dcba-45c1-8bd4-a72d83bc4ef7">  
 
-查看已经停止的容器 docker ps -a  
+查看已经停止的容器 
+```sh
+docker ps -a
+```
+删除所有Container
+```sh
+docker rm $(docker ps -aq)
+```  
 运行container
 ```sh
 docker run -d --name mynginx -p 80:80 nginx
@@ -21,4 +28,17 @@ docker run -d --name mynginx -p 80:80 nginx
     -d      Run container in background and print container ID  
     --name  Assign a name to the container  
     -p      Publish a container's port(s) to the host  
-进入 docker exec -it mynginx /bin/bash
+进入 docker exec -it mynginx /bin/bash  
+
+## Bind mount a volume 目录挂载
+```sh
+docker run -d --name mynginx -p 80:80 -v /app/nghtml:/usr/share/nginx/html --name app nginx
+```
+## 卷映射
+```sh
+docker run -d -p 99:80 -v /app/nhtml:/usr/share/nginx/html -v ngconf:/etc/nginx  --name app nginx
+```
+映射目录  
+```sh
+cd /var/lib/docker/volumes/ngconf
+```
