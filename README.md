@@ -85,4 +85,60 @@ docker run -d -p 90:80 --name app2 --network mynet nginx
 curl http://app2:80
 ```
 <img width="735" alt="Screenshot 2024-06-27 at 14 08 37" src="https://github.com/goushijianglin/docker/assets/83333650/85cadecd-4ce5-441c-b301-ebe2efe81657">
+  
+## Docker Compose  
 
+不使用compose：  
+
+mysql:  
+```sh
+docker run -d -p 3306:3306 \
+-e MYSQL_ROOT_PASSWORD=123456 \
+-e MYSQL_DATABASE=wordpress \
+-v mysql-data:/var/lib/mysql \
+-v /app/mysql:/etc/mysql/conf.d \
+--restart always --name mysql \
+--network blog \
+```
+wordpress:一个blog的服务  
+```sh
+docker run -d -p 8080:80 \
+-e WORDPRESS_DB_HOST=mysql \
+-e WORDPRESS_DB_USER=root \
+-e WORDPRESS_DB_PASSWORD=123456 \
+-e WORDPRESS_DB_NAME=wordpress \
+-v wordpress:/var/www/html \
+--restart always --name wordpress-app \
+--network blog \
+```
+
+使用compose：  
+
+```sh
+name: myblog
+services:
+  mysql:
+    container_name: mysql
+    image: mysql:8.0
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=123456
+      - MYSQL_DATABASE=wordpress
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - /app/myconf:/etc/mysql/conf.d
+    restart: always
+    networks:
+      - blog
+  wordpress:
+    image: wordpress
+    ports:
+      - "8080:80"
+    environment:
+      WORDPRESS_DB_HOST: mysql
+      WORDPRESS_DB_USER: root 
+      WORDPRESS_DB_PASSWORD: 123456
+      WORDPRESS_DB_NAME: wordpress
+
+```
